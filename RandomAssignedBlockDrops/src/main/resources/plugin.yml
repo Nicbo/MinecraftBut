@@ -1,0 +1,6 @@
+main: ca.nicbo.minecraftbut.randomassignedblockdrops.RandomAssignedBlockDrops
+name: RandomAssignedBlockDrops
+version: ${project.version}
+description: All drops from blocks are randomized
+author: Nicbo
+api-version: 1.13
