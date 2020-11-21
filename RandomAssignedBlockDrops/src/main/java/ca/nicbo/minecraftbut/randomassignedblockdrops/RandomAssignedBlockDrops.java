@@ -23,13 +23,10 @@ import java.util.stream.Collectors;
  */
 
 public class RandomAssignedBlockDrops extends JavaPlugin implements Listener {
-    private static final Map<Material, Material> MATERIAL_MAP;
-    private static final Map<Material, LootTables> MATERIAL_LOOT_TABLES_MAP;
+    private static final Map<Material, Material> MATERIAL_MAP = new EnumMap<>(Material.class);
+    private static final Map<Material, LootTable> MATERIAL_LOOT_TABLES_MAP = new EnumMap<>(Material.class);
 
     static {
-        MATERIAL_MAP = new HashMap<>();
-        MATERIAL_LOOT_TABLES_MAP = new HashMap<>();
-
         // Materials minus the legacy ones
         List<Material> materials = Arrays.stream(Material.values())
                 .filter(material -> !material.name().startsWith("LEGACY"))
@@ -39,15 +36,40 @@ public class RandomAssignedBlockDrops extends JavaPlugin implements Listener {
         List<Material> shuffledMaterials = new ArrayList<>(materials);
         Collections.shuffle(shuffledMaterials);
 
+        // Create list of LootTables we can use - These all do not need a killer/entity
+        List<LootTable> lootTables = Arrays.asList(
+                LootTables.ABANDONED_MINESHAFT.getLootTable(), LootTables.BURIED_TREASURE.getLootTable(),
+                LootTables.DESERT_PYRAMID.getLootTable(), LootTables.END_CITY_TREASURE.getLootTable(),
+                LootTables.IGLOO_CHEST.getLootTable(), LootTables.JUNGLE_TEMPLE.getLootTable(),
+                LootTables.JUNGLE_TEMPLE_DISPENSER.getLootTable(), LootTables.NETHER_BRIDGE.getLootTable(),
+                LootTables.PILLAGER_OUTPOST.getLootTable(), LootTables.BASTION_TREASURE.getLootTable(),
+                LootTables.BASTION_OTHER.getLootTable(), LootTables.BASTION_BRIDGE.getLootTable(),
+                LootTables.BASTION_HOGLIN_STABLE.getLootTable(), LootTables.RUINED_PORTAL.getLootTable(),
+                LootTables.SHIPWRECK_MAP.getLootTable(), LootTables.SHIPWRECK_SUPPLY.getLootTable(),
+                LootTables.SHIPWRECK_TREASURE.getLootTable(), LootTables.SIMPLE_DUNGEON.getLootTable(),
+                LootTables.SPAWN_BONUS_CHEST.getLootTable(), LootTables.STRONGHOLD_CORRIDOR.getLootTable(),
+                LootTables.STRONGHOLD_CROSSING.getLootTable(), LootTables.STRONGHOLD_LIBRARY.getLootTable(),
+                LootTables.UNDERWATER_RUIN_BIG.getLootTable(), LootTables.UNDERWATER_RUIN_SMALL.getLootTable(),
+                LootTables.VILLAGE_ARMORER.getLootTable(), LootTables.VILLAGE_BUTCHER.getLootTable(),
+                LootTables.VILLAGE_CARTOGRAPHER.getLootTable(), LootTables.VILLAGE_DESERT_HOUSE.getLootTable(),
+                LootTables.VILLAGE_FISHER.getLootTable(), LootTables.VILLAGE_FLETCHER.getLootTable(),
+                LootTables.VILLAGE_MASON.getLootTable(), LootTables.VILLAGE_PLAINS_HOUSE.getLootTable(),
+                LootTables.VILLAGE_SAVANNA_HOUSE.getLootTable(), LootTables.VILLAGE_SHEPHERD.getLootTable(),
+                LootTables.VILLAGE_SNOWY_HOUSE.getLootTable(), LootTables.VILLAGE_TAIGA_HOUSE.getLootTable(),
+                LootTables.VILLAGE_TANNERY.getLootTable(), LootTables.VILLAGE_TEMPLE.getLootTable(),
+                LootTables.VILLAGE_TOOLSMITH.getLootTable(), LootTables.VILLAGE_WEAPONSMITH.getLootTable(),
+                LootTables.WOODLAND_MANSION.getLootTable()
+        );
+
         // Make room for loot tables
-        trimList(materials, LootTables.values().length);
+        trimList(materials, lootTables.size());
 
         // Loop through the shuffled materials
         for (int i = 0, j = 0; i < shuffledMaterials.size(); i++) {
             final Material keyMaterial = shuffledMaterials.get(i);
 
             if (i >= materials.size()) { // Add loot tables
-                MATERIAL_LOOT_TABLES_MAP.put(keyMaterial, LootTables.values()[j++]);
+                MATERIAL_LOOT_TABLES_MAP.put(keyMaterial, lootTables.get(j++));
                 continue;
             }
 
@@ -74,15 +96,11 @@ public class RandomAssignedBlockDrops extends JavaPlugin implements Listener {
         Material material = block.getType();
         Location location = block.getLocation();
 
-        Iterable<ItemStack> drops;
-
+        // Get drops from the material
         Material selectedMaterial = MATERIAL_MAP.get(material);
-        if (selectedMaterial == null) { // Material is mapped to a loot table
-            LootTable table = MATERIAL_LOOT_TABLES_MAP.get(material).getLootTable();
-            drops = table.populateLoot(ThreadLocalRandom.current(), new LootContext.Builder(location).build());
-        } else {
-            drops = Collections.singletonList(new ItemStack(selectedMaterial));
-        }
+        Collection<ItemStack> drops = selectedMaterial == null ? // Material is mapped to a loot table
+                MATERIAL_LOOT_TABLES_MAP.get(material).populateLoot(ThreadLocalRandom.current(), new LootContext.Builder(location).build()) :
+                Collections.singletonList(new ItemStack(selectedMaterial));
 
         // Drop the items
         World world = block.getWorld();
