@@ -23,21 +23,25 @@ import java.util.stream.Collectors;
  */
 
 public class RandomAssignedBlockDrops extends JavaPlugin implements Listener {
-    private static final Map<Material, Material> MATERIAL_MAP = new EnumMap<>(Material.class);
-    private static final Map<Material, LootTable> MATERIAL_LOOT_TABLES_MAP = new EnumMap<>(Material.class);
+    private static final Map<Material, Material> MATERIAL_MAP;
+    private static final Map<Material, LootTable> MATERIAL_LOOT_TABLES_MAP;
 
     static {
-        // Materials minus the legacy ones
-        List<Material> materials = Arrays.stream(Material.values())
-                .filter(material -> !material.name().startsWith("LEGACY"))
+        Map<Material, Material> materialMap = new EnumMap<>(Material.class);
+        Map<Material, LootTable> materialLootTablesMap = new EnumMap<>(Material.class);
+
+        // List of shuffled materials
+        List<Material> materials = new ArrayList<>(Arrays.asList(Material.values()));
+        Collections.shuffle(materials);
+
+        // List of shuffled block materials
+        List<Material> keyMaterials = new ArrayList<>(materials).stream()
+                .filter(Material::isBlock)
                 .collect(Collectors.toList());
+        Collections.shuffle(keyMaterials);
 
-        // Create clone of materials and shuffle them
-        List<Material> shuffledMaterials = new ArrayList<>(materials);
-        Collections.shuffle(shuffledMaterials);
-
-        // Create list of LootTables we can use - These all do not need a killer/entity
-        List<LootTable> lootTables = Arrays.asList(
+        // List of shuffled loot tables that do not need a killer/entity
+        List<LootTable> lootTables = new ArrayList<>(Arrays.asList(
                 LootTables.ABANDONED_MINESHAFT.getLootTable(), LootTables.BURIED_TREASURE.getLootTable(),
                 LootTables.DESERT_PYRAMID.getLootTable(), LootTables.END_CITY_TREASURE.getLootTable(),
                 LootTables.IGLOO_CHEST.getLootTable(), LootTables.JUNGLE_TEMPLE.getLootTable(),
@@ -59,30 +63,24 @@ public class RandomAssignedBlockDrops extends JavaPlugin implements Listener {
                 LootTables.VILLAGE_TANNERY.getLootTable(), LootTables.VILLAGE_TEMPLE.getLootTable(),
                 LootTables.VILLAGE_TOOLSMITH.getLootTable(), LootTables.VILLAGE_WEAPONSMITH.getLootTable(),
                 LootTables.WOODLAND_MANSION.getLootTable()
-        );
+        ));
+        Collections.shuffle(lootTables);
 
-        // Make room for loot tables
-        trimList(materials, lootTables.size());
+        // Put materials and loot tables into maps
+        final int lootTablesIndex = keyMaterials.size() - lootTables.size();
+        for (int i = 0; i < keyMaterials.size(); i++) {
+            final Material keyMaterial = keyMaterials.get(i);
 
-        // Loop through the shuffled materials
-        for (int i = 0, j = 0; i < shuffledMaterials.size(); i++) {
-            final Material keyMaterial = shuffledMaterials.get(i);
-
-            if (i >= materials.size()) { // Add loot tables
-                MATERIAL_LOOT_TABLES_MAP.put(keyMaterial, lootTables.get(j++));
+            if (i >= lootTablesIndex) { // Add loot tables
+                materialLootTablesMap.put(keyMaterial, lootTables.get(i - lootTablesIndex));
                 continue;
             }
 
-            MATERIAL_MAP.put(keyMaterial, materials.get(i));
+            materialMap.put(keyMaterial, materials.get(i));
         }
 
-        /*
-        System.out.println("MATERIAL_LOOT_MAP:");
-        System.out.println(MATERIAL_MAP.toString());
-
-        System.out.println("MATERIAL_LOOT_TABLES_MAP");
-        System.out.println(MATERIAL_LOOT_TABLES_MAP.toString());
-         */
+        MATERIAL_MAP = Collections.unmodifiableMap(materialMap);
+        MATERIAL_LOOT_TABLES_MAP = Collections.unmodifiableMap(materialLootTablesMap);
     }
 
     @Override
@@ -104,18 +102,14 @@ public class RandomAssignedBlockDrops extends JavaPlugin implements Listener {
 
         // Drop the items
         World world = block.getWorld();
-        Location dropLocation = location.clone().add(0.5D, 0.0D, 0.5D);
+        Location dropLocation = location.clone().add(0.5, 0.0, 0.5);
         for (ItemStack drop : drops) {
-            if (drop.getType() != Material.AIR) {
+            if (!drop.getType().isAir()) {
                 world.dropItemNaturally(dropLocation, drop);
             }
         }
 
         // Don't drop original items
         event.setDropItems(false);
-    }
-
-    private static void trimList(List<?> list, int amount) {
-        list.subList(list.size() - amount, list.size()).clear();
     }
 }
