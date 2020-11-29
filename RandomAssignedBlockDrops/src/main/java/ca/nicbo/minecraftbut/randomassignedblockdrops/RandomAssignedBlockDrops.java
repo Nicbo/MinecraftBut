@@ -30,15 +30,17 @@ public class RandomAssignedBlockDrops extends JavaPlugin implements Listener {
         Map<Material, Material> materialMap = new EnumMap<>(Material.class);
         Map<Material, LootTable> materialLootTablesMap = new EnumMap<>(Material.class);
 
-        // List of shuffled materials
-        List<Material> materials = new ArrayList<>(Arrays.asList(Material.values()));
-        Collections.shuffle(materials);
-
         // List of shuffled block materials
-        List<Material> keyMaterials = new ArrayList<>(materials).stream()
+        List<Material> blockMaterials = Arrays.stream(Material.values())
                 .filter(Material::isBlock)
                 .collect(Collectors.toList());
-        Collections.shuffle(keyMaterials);
+        Collections.shuffle(blockMaterials);
+
+        // List of shuffled item materials
+        List<Material> itemMaterials = Arrays.stream(Material.values())
+                .filter(Material::isItem)
+                .collect(Collectors.toList());
+        Collections.shuffle(itemMaterials);
 
         // List of shuffled loot tables that do not need a killer/entity
         List<LootTable> lootTables = new ArrayList<>(Arrays.asList(
@@ -67,16 +69,16 @@ public class RandomAssignedBlockDrops extends JavaPlugin implements Listener {
         Collections.shuffle(lootTables);
 
         // Put materials and loot tables into maps
-        final int lootTablesIndex = keyMaterials.size() - lootTables.size();
-        for (int i = 0; i < keyMaterials.size(); i++) {
-            final Material keyMaterial = keyMaterials.get(i);
+        final int lootTablesIndex = blockMaterials.size() - lootTables.size();
+        for (int i = 0; i < blockMaterials.size(); i++) {
+            final Material keyMaterial = blockMaterials.get(i);
 
             if (i >= lootTablesIndex) { // Add loot tables
                 materialLootTablesMap.put(keyMaterial, lootTables.get(i - lootTablesIndex));
                 continue;
             }
 
-            materialMap.put(keyMaterial, materials.get(i));
+            materialMap.put(keyMaterial, itemMaterials.get(i));
         }
 
         MATERIAL_MAP = Collections.unmodifiableMap(materialMap);
@@ -104,9 +106,7 @@ public class RandomAssignedBlockDrops extends JavaPlugin implements Listener {
         World world = block.getWorld();
         Location dropLocation = location.clone().add(0.5, 0.0, 0.5);
         for (ItemStack drop : drops) {
-            if (!drop.getType().isAir()) {
-                world.dropItemNaturally(dropLocation, drop);
-            }
+            world.dropItemNaturally(dropLocation, drop);
         }
 
         // Don't drop original items
