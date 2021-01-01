@@ -1,0 +1,7 @@
+main: ca.nicbo.minecraftbut.youareachicken.YouAreAChicken
+name: YouAreAChicken
+version: ${project.version}
+description: All players are chickens
+author: Nicbo
+api-version: 1.16
+depend: [ LibsDisguises ]

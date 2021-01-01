@@ -12,6 +12,7 @@
 
     <modules>
         <module>RandomAssignedBlockDrops</module>
+        <module>YouAreAChicken</module>
     </modules>
 
     <properties>
