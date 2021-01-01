@@ -20,8 +20,6 @@ import org.bukkit.potion.PotionEffectType;
  * @author Nicbo
  */
 public class YouAreAChicken extends JavaPlugin implements Listener {
-    private static final int LEVITATION_AMPLIFIER = 252; // This is the closest I could get to the chicken fall speed
-
     @Override
     public void onEnable() {
         getServer().getPluginManager().registerEvents(this, this);
@@ -45,7 +43,7 @@ public class YouAreAChicken extends JavaPlugin implements Listener {
 
     @EventHandler(priority = EventPriority.MONITOR)
     public void onRespawn(PlayerRespawnEvent event) {
-        disguiseAsChicken(event.getPlayer());
+        getServer().getScheduler().runTask(this, () -> disguiseAsChicken(event.getPlayer()));
     }
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
@@ -62,7 +60,9 @@ public class YouAreAChicken extends JavaPlugin implements Listener {
         giveSlowFall(player);
     }
 
+    // Unfortunately can't use levitation here, causes issues with opening containers
+    // Until I find a better solution, slow falling will have to do
     private static void giveSlowFall(Player player) {
-        player.addPotionEffect(new PotionEffect(PotionEffectType.LEVITATION, Integer.MAX_VALUE, LEVITATION_AMPLIFIER, false, false));
+        player.addPotionEffect(new PotionEffect(PotionEffectType.SLOW_FALLING, Integer.MAX_VALUE, 0, false, false));
     }
 }
