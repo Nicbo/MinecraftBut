@@ -56,6 +56,8 @@ public class YouAreAChicken extends JavaPlugin implements Listener {
         MobDisguise chicken = new MobDisguise(DisguiseType.CHICKEN);
         chicken.setNotifyBar(DisguiseConfig.NotifyBar.NONE);
         chicken.setKeepDisguiseOnPlayerDeath(true);
+        chicken.getWatcher().setCustomName(player.getName());
+        chicken.getWatcher().setCustomNameVisible(true);
         DisguiseAPI.disguiseToAll(player, chicken);
         player.getAttribute(Attribute.GENERIC_MAX_HEALTH).setBaseValue(4);
         giveSlowFall(player);
