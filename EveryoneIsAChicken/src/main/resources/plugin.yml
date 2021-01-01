@@ -1,5 +1,5 @@
-main: ca.nicbo.minecraftbut.youareachicken.YouAreAChicken
-name: YouAreAChicken
+main: ca.nicbo.minecraftbut.everyoneisachicken.EveryoneIsAChicken
+name: EveryoneIsAChicken
 version: ${project.version}
 description: All players are chickens
 author: Nicbo

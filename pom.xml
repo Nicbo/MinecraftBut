@@ -11,8 +11,8 @@
     <name>MinecraftBut</name>
 
     <modules>
-        <module>RandomAssignedBlockDrops</module>
-        <module>YouAreAChicken</module>
+        <module>BlockDropsAreRandomlyAssigned</module>
+        <module>EveryoneIsAChicken</module>
     </modules>
 
     <properties>

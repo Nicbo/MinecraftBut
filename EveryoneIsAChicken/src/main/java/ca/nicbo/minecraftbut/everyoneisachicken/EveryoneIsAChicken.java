@@ -1,4 +1,4 @@
-package ca.nicbo.minecraftbut.youareachicken;
+package ca.nicbo.minecraftbut.everyoneisachicken;
 
 import me.libraryaddict.disguise.DisguiseAPI;
 import me.libraryaddict.disguise.DisguiseConfig;
@@ -19,7 +19,7 @@ import org.bukkit.potion.PotionEffectType;
 /**
  * @author Nicbo
  */
-public class YouAreAChicken extends JavaPlugin implements Listener {
+public class EveryoneIsAChicken extends JavaPlugin implements Listener {
     @Override
     public void onEnable() {
         getServer().getPluginManager().registerEvents(this, this);

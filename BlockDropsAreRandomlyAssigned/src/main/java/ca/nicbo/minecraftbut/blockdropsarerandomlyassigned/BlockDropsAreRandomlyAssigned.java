@@ -1,4 +1,4 @@
-package ca.nicbo.minecraftbut.randomassignedblockdrops;
+package ca.nicbo.minecraftbut.blockdropsarerandomlyassigned;
 
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -27,7 +27,7 @@ import java.util.stream.Collectors;
 /**
  * @author Nicbo
  */
-public class RandomAssignedBlockDrops extends JavaPlugin implements Listener {
+public class BlockDropsAreRandomlyAssigned extends JavaPlugin implements Listener {
     private static final Map<Material, Material> MATERIAL_MAP;
     private static final Map<Material, LootTable> MATERIAL_LOOT_TABLES_MAP;
 

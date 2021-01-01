@@ -10,8 +10,8 @@
         <version>1.0.0</version>
     </parent>
 
-    <artifactId>randomassigneddrops</artifactId>
+    <artifactId>blockdropsarerandomlyassigned</artifactId>
     <version>1.0.3</version>
     <packaging>jar</packaging>
-    <name>RandomAssignedBlockDrops</name>
+    <name>BlockDropsAreRandomlyAssigned</name>
 </project>

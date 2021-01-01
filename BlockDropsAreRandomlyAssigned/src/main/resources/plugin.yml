@@ -1,5 +1,5 @@
-main: ca.nicbo.minecraftbut.randomassignedblockdrops.RandomAssignedBlockDrops
-name: RandomAssignedBlockDrops
+main: ca.nicbo.minecraftbut.blockdropsarerandomlyassigned.BlockDropsAreRandomlyAssigned
+name: BlockDropsAreRandomlyAssigned
 version: ${project.version}
 description: All drops from blocks are assigned to random items/loottables
 author: Nicbo
