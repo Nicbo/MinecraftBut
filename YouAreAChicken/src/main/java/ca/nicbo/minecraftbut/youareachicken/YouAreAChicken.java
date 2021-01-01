@@ -43,7 +43,7 @@ public class YouAreAChicken extends JavaPlugin implements Listener {
 
     @EventHandler(priority = EventPriority.MONITOR)
     public void onRespawn(PlayerRespawnEvent event) {
-        getServer().getScheduler().runTask(this, () -> disguiseAsChicken(event.getPlayer()));
+        getServer().getScheduler().runTask(this, () -> giveSlowFall(event.getPlayer()));
     }
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
@@ -55,6 +55,7 @@ public class YouAreAChicken extends JavaPlugin implements Listener {
     private static void disguiseAsChicken(Player player) {
         MobDisguise chicken = new MobDisguise(DisguiseType.CHICKEN);
         chicken.setNotifyBar(DisguiseConfig.NotifyBar.NONE);
+        chicken.setKeepDisguiseOnPlayerDeath(true);
         DisguiseAPI.disguiseToAll(player, chicken);
         player.getAttribute(Attribute.GENERIC_MAX_HEALTH).setBaseValue(4);
         giveSlowFall(player);
